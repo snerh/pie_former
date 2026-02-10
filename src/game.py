@@ -1,6 +1,7 @@
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG_COLOR
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG_COLOR, FIXED_DT
 from scenes.level import LevelScene
+import time
 
 class Game:
     def __init__(self):
@@ -14,18 +15,26 @@ class Game:
 
     def run(self):
         running = True
+        accumulator = 0.0
+        prev_time = time.perf_counter()
+
         while running:
-            dt = self.clock.tick(FPS) / 1000
+            now = time.perf_counter()
+            accumulator += now - prev_time
+            prev_time = now
+            #dt = self.clock.tick(FPS) / 1000
+            while accumulator >= FIXED_DT:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                    self.scene.handle_event(event)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                self.scene.handle_event(event)
+                self.scene.update(FIXED_DT)
+                self.screen.fill(BG_COLOR)
+                self.scene.draw(self.screen)
+                pygame.display.flip()
 
-            self.scene.update(dt)
-            self.screen.fill(BG_COLOR)
-            self.scene.draw(self.screen)
-            pygame.display.flip()
+                accumulator -=FIXED_DT
 
         pygame.quit()
 

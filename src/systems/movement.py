@@ -1,11 +1,24 @@
 from settings import PLAYER_MAX_SPEED, PLAYER_ACCEL, PLAYER_FRICTION, JUMP_SPEED, JUMP_BUFFER_TIME
 from components.intent import Intent
+from components.intent_playback import IntentPlayback
 from components.physics_body import PhysicsBody
 
 class MovementSystem:
     def update(self, entities, dt):
         for e in entities:
             intent = e.get(Intent)
+            if not intent:
+                intent = e.get(IntentPlayback)
+                if intent and intent.clone:
+                    e.disable()
+            else:
+                intent.clone_buffer += dt
+                # clone spawn
+                if intent.clone and intent.clone_buffer > 1:
+                    intent.clone_buffer = 0
+                    clone = e.spawn_clone()
+                    return clone
+
             body = e.get(PhysicsBody)
 
             if not intent or not body:
@@ -31,4 +44,7 @@ class MovementSystem:
                 body.vy = -JUMP_SPEED
                 body.on_ground = False
                 intent.jump_buffer = 0
+
+            
+
                 
