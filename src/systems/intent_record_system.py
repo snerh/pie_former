@@ -9,5 +9,7 @@ class IntentRecordSystem:
                 continue
 
             timeline.intents.setdefault(frame,{})
-            timeline.intents[frame][e.id] = {"move_x":intent.move_x, "jump":intent.jump, "clone":intent.clone}
+            timeline.intents[frame][e.id] = {"move_x":intent.move_x, 
+                                            "jump":intent.jump, 
+                                            "clone_pressed":intent.clone_pressed}
             #.append((intent.move_x, intent.jump))

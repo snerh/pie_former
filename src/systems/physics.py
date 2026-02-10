@@ -1,6 +1,7 @@
 from settings import GRAVITY, PLAYER_FRICTION
 from components.physics_body import PhysicsBody
 from components.collider import Collider
+from components.clone_state import CloneState
 
 class PhysicsSystem:
     def update(self, entities, dt):
@@ -8,6 +9,8 @@ class PhysicsSystem:
         for e in entities:
             body = e.get(PhysicsBody)
             col = e.get(Collider)
+            if e.get(CloneState) and not e.get(CloneState).active:
+                continue
 
             if not body or not col:
                 continue
@@ -43,6 +46,9 @@ class PhysicsSystem:
                 continue
             sc = s.get(Collider)
             sb = s.get(PhysicsBody)
+            if s.get(CloneState) and not s.get(CloneState).active:
+                continue
+
             if not sb:
                 svx = 0
             else:
@@ -71,6 +77,9 @@ class PhysicsSystem:
                 continue
             sc = s.get(Collider)
             sb = s.get(PhysicsBody)
+            if s.get(CloneState) and not s.get(CloneState).active:
+                continue
+            
             if not sb:
                 svy = 0
             else:

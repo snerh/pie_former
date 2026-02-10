@@ -1,4 +1,6 @@
 from entities.world_snapshot import WorldSnapshot
+from components.clone_state import CloneState
+from components.collider import Collider
 class WorldStateSystem:
     def snapshot(self, entities):
         data = []
@@ -27,4 +29,7 @@ class WorldStateSystem:
                     if type(c).__name__ == c_name
                 )
                 comp.deserialize(c_data)
+            if e.get(CloneState):
+                rect=e.get(Collider).rect
+                print(f"Clone loaded, id = {e.id}, x = {rect.x}, y = {rect.y}")
     

@@ -10,6 +10,8 @@ from systems.physics import PhysicsSystem
 from systems.intent_playback_system import IntentPlaybackSystem
 from systems.intent_record_system import IntentRecordSystem
 from systems.world_state_system import WorldStateSystem
+from systems.clone_spawn_system import CloneSpawnSystem
+from systems.clone_lifecycle_system import CloneLifecycleSystem
 from components.timeline import Timeline
 from systems.camera import Camera
 from levels.level1 import LEVEL_1
@@ -21,6 +23,8 @@ class LevelScene(Scene):
         self.input_system = InputSystem()
         self.record_system = IntentRecordSystem()
         self.playback_system = IntentPlaybackSystem()
+        self.clone_spawn_system = CloneSpawnSystem()
+        self.clone_lifecycle_system = CloneLifecycleSystem()
         self.movement_system = MovementSystem()
         self.physics_system = PhysicsSystem()
         self.world_state_system = WorldStateSystem()
@@ -66,32 +70,37 @@ class LevelScene(Scene):
         self.input_system.update(self.entities)
         # если создали клона, откатываем мир назад
         self.record_system.update(self.entities, self.timeline, self.frame)
-        self.playback_system.update(self.entities, self.timeline, self.frame)
-        clone = self.movement_system.update(self.entities, dt)
-        self.physics_system.update(self.entities, dt)
-        self.camera.update(self.player)
-
+        self.clone_lifecycle_system.update(self.entities, self.timeline, self.frame)
+        clone = self.clone_spawn_system.update(self.entities, self.frame, self.timeline, dt)
         if clone:
-            self.reply_to(self.frame-60)
+            self.reply_to(self.frame-120)
             self.entities.append(clone)
             self.player = clone
         
-        if self.frame % self.timeline.keyframe_interval == 0:
+        self.playback_system.update(self.entities, self.timeline, self.frame)
+        self.movement_system.update(self.entities, dt) 
+        self.physics_system.update(self.entities, dt)
+        self.camera.update(self.player)
+
+        
+        self.frame +=1
+        
+        if self.frame % self.timeline.keyframe_interval == 1:
             snapshot = self.world_state_system.snapshot(self.entities)
             self.timeline.keyframes.append((self.frame, snapshot))
             
-        self.frame +=1
+        #self.frame +=1
 
     def reply_to(self, target_frame):
         # Возвращаем в прошлое весь мир
         keyframe_frame, snapshot = self.timeline.find_keyframe(target_frame)
         self.world_state_system.load_snapshot(snapshot, self.entities)
         print("Old frame = ", self.frame)
-        self.frame = keyframe_frame+1 
+        self.frame = keyframe_frame#+1 
         print("New frame = ", self.frame)
         # Проигрываем запись из Timeline до target_frame
-        while False and self.frame < target_frame:
-            print("Loop frame = ", self.frame)
+        while self.frame < target_frame:
+            #print("Loop frame = ", self.frame)
             self.record_system.update(self.entities, self.timeline, self.frame)
             self.playback_system.update(self.entities, self.timeline, self.frame)
             self.movement_system.update(self.entities, FIXED_DT)

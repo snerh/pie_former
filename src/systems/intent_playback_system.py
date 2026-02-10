@@ -8,6 +8,7 @@ class IntentPlaybackSystem:
                 continue
             play.move_x = 0
             play.jump = False
+            play.clone_pressed = False
 
             if frame not in timeline.intents:
                 return    
@@ -18,4 +19,4 @@ class IntentPlaybackSystem:
                 #print(f"frame {frame}, id = {e.id}, data = move_x:{data["move_x"]}, junp:{data["jump"]}")
                 play.move_x = data["move_x"]
                 play.jump = data["jump"]
-                play.clone = data["clone"]
+                play.clone_pressed = data["clone_pressed"]

@@ -11,7 +11,7 @@ class InputSystem:
 
             intent.move_x = 0
             intent.jump = False
-            intent.clone = False
+            intent.clone_pressed = False
 
             if keys[pygame.K_LEFT]:
                 intent.move_x -= 1
@@ -22,5 +22,5 @@ class InputSystem:
             # вызов клона
             if keys[pygame.K_r]:
                 print("clone_buffer: ", intent.clone_buffer)
-                intent.clone = True
+                intent.clone_pressed = True
 
