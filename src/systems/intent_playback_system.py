@@ -1,6 +1,6 @@
 from components.intent_playback import IntentPlayback
 class IntentPlaybackSystem:
-    def update(self, entities, timeline, frame):
+    def update(self, entities, timeline, branch_id, frame):
         for e in entities:
             play = e.get(IntentPlayback)
 

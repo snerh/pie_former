@@ -17,8 +17,7 @@ class Player(Entity):
     def spawn_clone(self, frame):
         rect = self.get(Collider).rect
         clone = Player(rect.x, rect.y)
-        print("Clone spowned, id = ", clone.id)
-        print(f"Clone spowned, x = {rect.x}, y = {rect.y}")
+        print(f"New player spawned, id = {clone.id}, x = {rect.x}, y = {rect.y}")
         self.components = {}
         self.add(IntentPlayback())
         self.add(PhysicsBody(gravity=True, pushable = True, mass=1.0))

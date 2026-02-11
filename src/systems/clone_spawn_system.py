@@ -4,7 +4,7 @@ from components.physics_body import PhysicsBody
 from components.timeline import Timeline, SpawnEvent
 from settings import CLONE_BUFFER_TIME
 class CloneSpawnSystem:
-    def update(self, entities, frame, timeline, dt):
+    def update(self, entities, timeline, branch_id, frame, dt):
         for e in entities:
             intent = e.get(Intent)
             if not intent:

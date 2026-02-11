@@ -19,6 +19,7 @@ from levels.level1 import LEVEL_1
 class LevelScene(Scene):
     def __init__(self):
         self.frame = 0
+        self.branch_id = 0
         self.timeline = Timeline()
         self.input_system = InputSystem()
         self.record_system = IntentRecordSystem()
@@ -69,9 +70,9 @@ class LevelScene(Scene):
     def update(self, dt):
         self.input_system.update(self.entities)
         # если создали клона, откатываем мир назад
-        self.record_system.update(self.entities, self.timeline, self.frame)
-        self.clone_lifecycle_system.update(self.entities, self.timeline, self.frame)
-        clone = self.clone_spawn_system.update(self.entities, self.frame, self.timeline, dt)
+        self.record_system.update(self.entities, self.timeline, self.branch_id, self.frame)
+        self.clone_lifecycle_system.update(self.entities, self.timeline, self.branch_id, self.frame)
+        clone = self.clone_spawn_system.update(self.entities, self.timeline, self.branch_id, self.frame, dt)
         if clone:
             self.reply_to(self.frame-120)
             self.entities.append(clone)
@@ -102,11 +103,13 @@ class LevelScene(Scene):
         while self.frame < target_frame:
             #print("Loop frame = ", self.frame)
             self.record_system.update(self.entities, self.timeline, self.frame)
+            self.clone_lifecycle_system.update(self.entities, self.timeline, self.frame)
             self.playback_system.update(self.entities, self.timeline, self.frame)
             self.movement_system.update(self.entities, FIXED_DT)
             self.physics_system.update(self.entities, FIXED_DT)
             self.frame +=1
             #self.update(FIXED_DT)
+        print("New frame = ", self.frame)
 
     def draw(self, screen):
         for entity in self.entities:

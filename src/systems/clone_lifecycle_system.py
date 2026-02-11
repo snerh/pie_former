@@ -9,11 +9,13 @@ class CloneLifecycleSystem:
                 continue
             spawn_frame = timeline.spawns.get(frame)
             if spawn_frame:
+                print(f"Spawn frame = {frame} was found")
                 spawn_event=spawn_frame.get(e.id)
                 if spawn_event:
                     e.get(Collider).deserialize(spawn_event.initial_state["collider"])
                     e.get(PhysicsBody).deserialize(spawn_event.initial_state["body"])
                     state.active = True
+                    print(f"Clone loaded from spawn list, id = {e.id}, x = {e.get(Collider).rect.x}, y = {e.get(Collider).rect.y}")
 
             if not state.active:
                 continue
