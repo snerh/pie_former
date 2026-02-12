@@ -12,7 +12,7 @@ from systems.intent_record_system import IntentRecordSystem
 from systems.world_state_system import WorldStateSystem
 from systems.clone_spawn_system import CloneSpawnSystem
 from systems.clone_lifecycle_system import CloneLifecycleSystem
-from components.timeline import Timeline
+from components.timeline import Timeline, Branch
 from systems.camera import Camera
 from levels.level1 import LEVEL_1
 
@@ -71,12 +71,8 @@ class LevelScene(Scene):
         self.input_system.update(self.entities)
         # если создали клона, откатываем мир назад
         self.record_system.update(self.entities, self.timeline, self.branch_id, self.frame)
-        self.clone_lifecycle_system.update(self.entities, self.timeline, self.branch_id, self.frame)
+        self.clone_lifecycle_system.update(self.entities, self.timeline, self.frame)
         clone = self.clone_spawn_system.update(self.entities, self.timeline, self.branch_id, self.frame, dt)
-        if clone:
-            self.reply_to(self.frame-120)
-            self.entities.append(clone)
-            self.player = clone
         
         self.playback_system.update(self.entities, self.timeline, self.frame)
         self.movement_system.update(self.entities, dt) 
@@ -85,10 +81,21 @@ class LevelScene(Scene):
 
         
         self.frame +=1
+
+        if clone:
+            self.reply_to(self.frame-120)
+            self.branch_id += 1
+            self.timeline.branches[self.branch_id]=Branch()
+            self.entities.append(clone)
+            self.player = clone
+            snapshot = self.world_state_system.snapshot(self.entities)
+            self.timeline.branches[self.branch_id].keyframes.append((self.frame, snapshot))
+            self.timeline.branches[self.branch_id].parent_branch = self.branch_id-1
+            self.timeline.branches[self.branch_id].fork_frame=self.frame
         
         if self.frame % self.timeline.keyframe_interval == 1:
             snapshot = self.world_state_system.snapshot(self.entities)
-            self.timeline.keyframes.append((self.frame, snapshot))
+            self.timeline.branches[self.branch_id].keyframes.append((self.frame, snapshot))
             
         #self.frame +=1
 
@@ -102,7 +109,7 @@ class LevelScene(Scene):
         # Проигрываем запись из Timeline до target_frame
         while self.frame < target_frame:
             #print("Loop frame = ", self.frame)
-            self.record_system.update(self.entities, self.timeline, self.frame)
+            self.record_system.update(self.entities, self.timeline, self.branch_id, self.frame)
             self.clone_lifecycle_system.update(self.entities, self.timeline, self.frame)
             self.playback_system.update(self.entities, self.timeline, self.frame)
             self.movement_system.update(self.entities, FIXED_DT)

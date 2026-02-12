@@ -1,4 +1,4 @@
-from components.timeline import Timeline
+from components.timeline import Timeline, Branch
 from components.intent import Intent
 class IntentRecordSystem:
     def update(self, entities, timeline, branch_id, frame):
@@ -8,9 +8,11 @@ class IntentRecordSystem:
             if not intent:
                 continue
 
-            timeline.intents\
-                .setdefault(branch_id, {})\
-                .setdefault(frame, {})[e.id] = {"move_x":intent.move_x, 
+            if not timeline.branches.get(branch_id):
+                timeline.branches[branch_id] = Branch()
+
+            timeline.branches[branch_id].intents\
+                .setdefault(frame,{})[e.id] = {"move_x":intent.move_x, 
                                                 "jump":intent.jump, 
                                                 "clone_pressed":intent.clone_pressed}
             #.append((intent.move_x, intent.jump))

@@ -1,19 +1,23 @@
 from components.intent_playback import IntentPlayback
+from components.clone_state import CloneState
 class IntentPlaybackSystem:
-    def update(self, entities, timeline, branch_id, frame):
+    def update(self, entities, timeline, frame):
         for e in entities:
             play = e.get(IntentPlayback)
+            state = e.get(CloneState)
 
-            if not play:
+            if not play or not state:
                 continue
+
+            branch = state.branch
             play.move_x = 0
             play.jump = False
             play.clone_pressed = False
 
-            if frame not in timeline.intents:
+            if frame not in timeline.branches[branch].intents:
                 return    
 
-            data = timeline.intents[frame].get(e.id)
+            data = timeline.branches[branch].intents[frame].get(e.id)
 
             if data:
                 #print(f"frame {frame}, id = {e.id}, data = move_x:{data["move_x"]}, junp:{data["jump"]}")

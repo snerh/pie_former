@@ -7,8 +7,8 @@ class CloneLifecycleSystem:
             state = e.get(CloneState)
             if not state:
                 continue
-            spawn_frame = timeline.spawns.get(frame)
-            if spawn_frame:
+            #spawn_frame = timeline.spawns.get(frame)
+            if False: #spawn_frame:
                 print(f"Spawn frame = {frame} was found")
                 spawn_event=spawn_frame.get(e.id)
                 if spawn_event:

@@ -1,11 +1,11 @@
-class Timeline:
-    branches: dict[int, Branch]
+#class Timeline:
+#    branches: dict[int, Branch]
 
-class Branch:
-    intents: dict[int, dict[int, IntentData]]
-    keyframes: dict[int, WorldSnapshot]
-    parent_branch: int | None
-    fork_frame: int | None
+#class Branch:
+#    intents: dict[int, dict[int, IntentData]]
+#    keyframes: dict[int, WorldSnapshot]
+#    parent_branch: int | None
+#    fork_frame: int | None
 
 class Branch:
     def __init__(self):
@@ -19,9 +19,9 @@ class Timeline:
         self.branches = {}
         self.keyframe_interval = keyframe_interval
         
-    def find_keyframe(self, frame, branch_no):
-        branch = self.branches[branch_no]
-        if branch
+    def find_keyframe(self, frame):
+        for branch_id in reversed(self.branches):
+            branch = self.branches[branch_id]
             for kf in reversed(branch.keyframes):
                 snapframe, snapshot = kf
                 if snapframe < frame:

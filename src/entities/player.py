@@ -14,7 +14,7 @@ class Player(Entity):
         self.add(PhysicsBody(gravity=True, pushable = True, mass=1.0))
         self.add(Collider(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)))
 
-    def spawn_clone(self, frame):
+    def spawn_clone(self, branch, frame):
         rect = self.get(Collider).rect
         clone = Player(rect.x, rect.y)
         print(f"New player spawned, id = {clone.id}, x = {rect.x}, y = {rect.y}")
@@ -22,7 +22,7 @@ class Player(Entity):
         self.add(IntentPlayback())
         self.add(PhysicsBody(gravity=True, pushable = True, mass=1.0))
         self.add(Collider(pygame.Rect(rect.x, rect.y, TILE_SIZE, TILE_SIZE)))
-        self.add(CloneState(True, frame))
+        self.add(CloneState(True, branch, frame))
         return clone
 
     def draw(self, screen, camera):

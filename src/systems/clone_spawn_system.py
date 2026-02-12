@@ -13,9 +13,9 @@ class CloneSpawnSystem:
             # clone spawn
             if intent.clone_pressed and intent.clone_buffer > CLONE_BUFFER_TIME:
                 intent.clone_buffer = 0
-                clone = e.spawn_clone(frame)
-                timeline.spawns.setdefault(frame,{})
-                timeline.spawns[frame][clone.id]=SpawnEvent(
+                clone = e.spawn_clone(branch_id, frame)
+                timeline.branches[branch_id].spawns.setdefault(frame,{})
+                timeline.branches[branch_id].spawns[frame][clone.id]=SpawnEvent(
                     {
                         "collider": clone.get(Collider).serialize(),
                         "body": clone.get(PhysicsBody).serialize()
