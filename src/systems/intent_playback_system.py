@@ -15,12 +15,12 @@ class IntentPlaybackSystem:
             play.clone_pressed = False
 
             if frame not in timeline.branches[branch].intents:
-                return    
+                continue
 
             data = timeline.branches[branch].intents[frame].get(e.id)
 
             if data:
-                #print(f"frame {frame}, id = {e.id}, data = move_x:{data["move_x"]}, junp:{data["jump"]}")
+                state.active = True
                 play.move_x = data["move_x"]
                 play.jump = data["jump"]
                 play.clone_pressed = data["clone_pressed"]

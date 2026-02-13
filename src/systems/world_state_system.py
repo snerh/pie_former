@@ -31,5 +31,5 @@ class WorldStateSystem:
                 comp.deserialize(c_data)
             if e.get(CloneState):
                 rect=e.get(Collider).rect
-                print(f"Clone loaded, id = {e.id}, frame = {e_data["id"]}, x = {rect.x}, y = {rect.y}")
+                print(f"Clone loaded, id = {e.id}, frame = {e_data["id"]}, branch = {e.get(CloneState).branch}, x = {rect.x}, y = {rect.y}")
     

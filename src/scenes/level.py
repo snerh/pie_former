@@ -121,5 +121,3 @@ class LevelScene(Scene):
     def draw(self, screen):
         for entity in self.entities:
             entity.draw(screen, self.camera)
-
-
